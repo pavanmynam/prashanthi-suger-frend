@@ -97,8 +97,8 @@ else:
         st.markdown("---")
         st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
 
-        if 'tracker_v3' not in st.session_state:
-            st.session_state.tracker_v3 = {
+        if 'tracker_v4' not in st.session_state:
+            st.session_state.tracker_v4 = {
                 "06:00 AM": {"task": "🌱 మెంతుల నీరు అలారమ్", "info": "రాత్రి నానబెట్టుకున్న 1 స్పూన్ మెంతుల నీటిని తాగి, ఆ మెంతులను నమిలి తినండి.", "status": "ఇంకా లేదు", "comment": ""},
                 "06:30 AM": {"task": "💧 ఉదయం వాటర్ అలారమ్", "info": "గోరువెచ్చని నీరు 1 గ్లాసు తాగండి.", "status": "ఇంకా లేదు", "comment": ""},
                 "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్", "info": "💊 మెట్‌ఫార్మిన్ 500mg (తెలంగాణ స్టైల్ మిల్లెట్ బ్రేక్‌ఫాస్ట్ తర్వాత).", "status": "ఇంకా లేదు", "comment": ""},
@@ -111,25 +111,25 @@ else:
                 "09:00 PM": {"task": "🚶‍♀️ డిన్నర్ తర్వాత చివరి నడక అలారమ్", "info": "పడుకునే ముందు 15 నిమిషాల ప్రశాంతమైన నడక ఆరోగ్యానికి ఎంతో మేలు చేస్తుంది.", "status": "ఇంకా లేదు", "comment": ""}
             }
 
-        for time_slot, data in st.session_state.tracker_v3.items():
+        for time_slot, data in st.session_state.tracker_v4.items():
             with st.expander(f"⏰ {time_slot} - {data['task']}"):
                 st.write(f"💡 {data['info']}")
                 col1, col2 = st.columns(2)
                 with col1:
                     if st.button(f"✅ పూర్తి చేసాను ({time_slot})", key=f"done_{time_slot}"):
-                        st.session_state.tracker_v3[time_slot]['status'] = "పూర్తి చేసారు ✅"
+                        st.session_state.tracker_v4[time_slot]['status'] = "పూర్తి చేసారు ✅"
                 with col2:
                     if st.button(f"❌ స్కిప్ చేసాను ({time_slot})", key=f"skip_{time_slot}"):
-                        st.session_state.tracker_v3[time_slot]['status'] = "స్కిప్ చేసారు ❌"
+                        st.session_state.tracker_v4[time_slot]['status'] = "స్కిప్ చేసారు ❌"
                 
                 comment = st.text_input("✍️ కామెంట్ రాయండి:", value=data['comment'], key=f"text_{time_slot}")
-                st.session_state.tracker_v3[time_slot]['comment'] = comment
-                st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker_v3[time_slot]['status']}**")
+                st.session_state.tracker_v4[time_slot]['comment'] = comment
+                st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker_v4[time_slot]['status']}**")
 
         st.markdown("---")
         if st.button("📊 రోజువారీ రిపోర్ట్ (Everyday Report) జనరేట్ చేయండి"):
             st.markdown("### 📋 ఈరోజు ఆరోజు నివేదిక")
-            for time_slot, data in st.session_state.tracker_v3.items():
+            for time_slot, data in st.session_state.tracker_v4.items():
                 st.markdown(f"""
                 <div class="report-box">
                 <strong>📍 సమయం: {time_slot}</strong><br>
@@ -140,12 +140,11 @@ else:
                 <br>
                 """, unsafe_allow_html=True)
 
-    # ----------------- 🌾 రాండమ్ స్క్రీన్ / ట్యాబ్ 2: తెలంగాణ డైట్ సజెషన్స్ -----------------
+    # ----------------- 🌾 ట్యాబ్ 2: తెలంగాణ డైట్ సజెషన్స్ -----------------
     with tab2:
         st.header("🌾 తెలంగాణ ఫుడ్ స్టైల్ - 10 రోజుల బెస్ట్ షుగర్ డైట్ ప్లాన్")
         st.write("రక్తంలో గ్లూకోజ్ స్థాయిలను అదుపులో ఉంచడానికి మన తెలంగాణ సాంప్రదాయ వంటకాలతో కూడిన హెల్తీ చార్ట్:")
         
-        # 🔑 ప్రత్యేక మెంతుల సలహా
         st.info("🌱 **మెంతుల అమృతం (Night to Morning Fix):** ప్రతిరోజూ రాత్రి పడుకునే ముందు ఒక టీస్పూన్ మెంతులను ఒక గ్లాసు నీటిలో నానబెట్టండి. ఉదయం లేవగానే పరగడుపున ఆ నీటిని తాగి, నానిన మెంతులను బాగా నమిలి మింగేయండి. ఇది ఇన్సులిన్ యాక్టివిటీని పెంచి రోజంతా షుగర్ లెవెల్స్ అదుపులో ఉండేలా సెట్ చేస్తుంది.")
         
         st.subheader("📅 10 రోజుల రోజువారీ మెనూ (Daily Menu Options)")
@@ -167,3 +166,4 @@ else:
         
         <div class='diet-box'>
         <strong>Day 7 - 10: రాగులు & సాంప్రదాయ సమతుల్య రోజులు</strong><br>
+        • <b>ఉదయం (08:30 AM):</b> రాగి దోశ (నూనె లేకుండా) + పుట్నాల చట్నీ లేదా రాగి జావ.<br>
