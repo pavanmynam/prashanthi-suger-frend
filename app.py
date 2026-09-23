@@ -1,17 +1,21 @@
 import streamlit as st
 import datetime
+import pytz  # ఇండియన్ టైమ్ జోన్ కోసం
 from streamlit_autorefresh import st_autorefresh
 
-# 1. యాప్ పేజీ మరియు స్టైలింగ్ సెటప్ (Good Looking UI)
+# 1. యాప్ పేజీ మరియు ప్రీమియం స్టైలింగ్ సెటప్ (Better & Beautiful UI)
 st.set_page_config(page_title="Prashanthi AI Sugar Care", page_icon="💖", layout="centered")
 
-# యాప్‌ను మరింత అందంగా మార్చడానికి కస్టమ్ CSS
+# యాప్ డిజైన్ అద్భుతంగా మార్చడానికి అడ్వాన్స్‌డ్ CSS
 st.markdown("""
     <style>
-    .main { background-color: #f9fbfd; }
-    .report-card { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #2e7d32; margin-bottom: 15px; }
-    .wish-box { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 15px; text-align: center; font-size: 20px; font-weight: bold; color: #0d47a1; margin-bottom: 20px; }
-    .alarm-box { background-color: #ffebee; border-left: 5px solid #c62828; padding: 15px; border-radius: 8px; font-weight: bold; color: #c62828; }
+    .main { background-color: #f4f7f6; }
+    .stApp { background-color: #f4f7f6; }
+    .wish-box { background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); padding: 22px; border-radius: 15px; text-align: center; font-size: 20px; font-weight: bold; color: white; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .metric-card { background-color: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-top: 4px solid #1976d2; text-align: center; }
+    .task-card-done { background-color: #e8f5e9; border-left: 5px solid #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+    .task-card-pending { background-color: #ffffff; border-left: 5px solid #ffe082; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .alarm-box { background-color: #ffebee; border-left: 6px solid #c62828; padding: 18px; border-radius: 10px; font-weight: bold; color: #c62828; animation: pulse 1s infinite; margin-bottom: 15px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -45,12 +49,13 @@ else:
         st.session_state.logged_in = False
         st.rerun()
 
-    # ప్రస్తుత సమయం
-    now = datetime.datetime.now()
+    # 🌐 3. పక్కా ఇండియన్ టైమ్ జోన్ (IST) సెటప్
+    IST = pytz.timezone('Asia/Kolkata')
+    now = datetime.datetime.now(IST)
     current_time_str = now.strftime("%H:%M")
     current_hour = now.hour
 
-    # 🌅 1. ఆటోమేటిక్ విషింగ్ మెసేజ్ లాజిక్ (Wishing Msg)
+    # 🌅 ఆటోమేటిక్ విషింగ్ మెసేజ్ లాజిక్ (Wishing Msg)
     st.markdown("<div class='wish-box'>", unsafe_allow_html=True)
     if 5 <= current_hour < 12:
         st.write("🌅 శుభోదయం ప్రశాంతి గారు! ఈరోజు మీ షుగర్ కంట్రోల్ చేయడానికి ఒక అద్భుతమైన రోజూవారీ ప్రణాళికతో ప్రారంభిద్దాం. కీప్ ఇట్ అప్! 💪")
@@ -62,7 +67,8 @@ else:
         st.write("🌌 శుభ రాత్రి ప్రశాంతి గారు! రాత్రి టాబ్లెట్ వేసుకుని, ప్రశాంతంగా నిద్రపోవడానికి సిద్ధమవ్వండి. రేపు మరింత ఆరోగ్యంగా ఉందాం! 🛌")
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.subheader(f"⏰ ప్రస్తుత సమయం: {now.strftime('%I:%M:%S %p')}")
+    # ఇండియన్ టైమ్ డిస్‌ప్లే
+    st.markdown(f"<h3 style='text-align: center; color: #333;'>⏰ భారతీయ ప్రామాణిక సమయం: {now.strftime('%I:%M:%S %p')}</h3>", unsafe_allow_html=True)
     st.write("---")
 
     # 📊 డైలీ టైమ్-టేబుల్ డేటాబేస్
@@ -80,12 +86,13 @@ else:
         {"id": "t11", "time": "22:00", "title": "🛌 ప్రశాంతమైన నిద్ర అలారమ్", "msg": "రాత్రి 10 అయింది. ఫోన్ పక్కన పెట్టేసి పడుకోండి. 7-8 గంటల నిద్ర చాలా ముఖ్యం!"}
     ]
 
-    # ⏳ రాబోయే అలారమ్ కౌంట్‌డౌన్ (Proper Setting & Loading Time)
+    # ⏳ రాబోయే అలారమ్ కౌంట్‌డౌన్ (ఇండియన్ టైమ్ బేస్డ్)
     next_alarm = None
     min_diff = float('inf')
     for alarm in DAILY_ALARM_ROUTINE:
         alarm_time = datetime.datetime.strptime(alarm["time"], "%H:%M").time()
         alarm_datetime = datetime.datetime.combine(now.date(), alarm_time)
+        alarm_datetime = IST.localize(alarm_datetime)
         if alarm_datetime < now:
             alarm_datetime += datetime.timedelta(days=1)
         diff = (alarm_datetime - now).total_seconds()
@@ -96,10 +103,9 @@ else:
     if next_alarm:
         hours_left = int(min_diff // 3600)
         minutes_left = int((min_diff % 3600) // 60)
-        st.info(f"👉 **రాబోయే టాస్క్:** {next_alarm['title']} ({next_alarm['time']})")
-        st.metric(label="⏱️ అలారమ్‌కు మిగిలి ఉన్న సమయం (Countdown)", value=f"{hours_left} గంటల {minutes_left} నిమిషాలు")
+        st.markdown(f"<div class='metric-card'><b>👉 రాబోయే టాస్క్:</b> {next_alarm['title']} ({next_alarm['time']})<br><span style='font-size: 20px; color: #e65100; font-weight: bold;'>⏱️ అలారమ్‌కు మిగిలి ఉన్న సమయం: {hours_left} గంటల {minutes_left} నిమిషాలు</span></div>", unsafe_allow_html=True)
 
-    # 🚨 లైవ్ అలారమ్ ట్రిగ్గర్
+    # 🚨 లైవ్ అలారమ్ ట్రిగ్గర్ లాజిక్
     for alarm in DAILY_ALARM_ROUTINE:
         if current_time_str == alarm["time"]:
             st.markdown(f"<div class='alarm-box'>🚨 {alarm['title']}<br>{alarm['msg']}</div>", unsafe_allow_html=True)
@@ -108,23 +114,21 @@ else:
 
     st.write("---")
 
-    # 💧 వాటర్ ట్రాకర్
+    # 💧 వాటర్ ట్రాకర్ సెక్షన్
     st.header("📊 Daily Health Tracker")
     col_w1, col_w2 = st.columns(2)
     with col_w1:
-        if st.button("🥤 1 గ్లాసు నీరు తాగాను (250ml)"):
+        if st.button("🥤 1 గ్లాసు నీరు తాగాను (250ml)", use_container_width=True):
             st.session_state.water_liters += 0.25
     with col_w2:
-        if st.button("🔄 రీసెట్ వాటర్ కౌంటర్"):
+        if st.button("🔄 రీసెట్ వాటర్ కౌంటర్", use_container_width=True):
             st.session_state.water_liters = 0.0
 
     st.metric(label="💧 మొత్తం తాగిన నీరు", value=f"{st.session_state.water_liters:.2f} L / 3.00 L")
-    
     st.write("---")
 
-    # 📋 2. రోజువారీ మానిటర్ నివేదిక (Day Monitor Report)
+    # 📋 రోజువారీ మానిటర్ నివేదిక (Day Monitor Report)
     st.header("📋 నేటి దినచర్య రిపోర్ట్ (Day Monitor Report)")
-    st.write("ప్రశాంతి గారు ఈరోజు పూర్తి చేసిన పనుల వివరాలు:")
     
     total_tasks = len(DAILY_ALARM_ROUTINE)
     completed_tasks = sum(1 for t in DAILY_ALARM_ROUTINE if st.session_state.tasks_done.get(t["id"], False))
@@ -132,19 +136,20 @@ else:
     st.progress(completed_tasks / total_tasks)
     st.write(f"📊 **టాస్క్ పూర్తయిన రేటు:** {completed_tasks} / {total_tasks} పనులు పూర్తయ్యాయి.")
 
-    # 📅 దినచర్య పట్టిక చెక్‌బాక్స్‌లతో (Good Looking List)
+    # 📅 దినచర్య పట్టిక చెక్‌బాక్స్‌లతో
     st.write("### 📝 టాస్క్ లిస్ట్ (సమయం కాగానే టిక్ చేయండి):")
     for alarm in DAILY_ALARM_ROUTINE:
-        is_current = (current_time_str == alarm["time"])
         box_key = f"chk_{alarm['id']}"
         
-        # సెషన్ స్టేట్ ఆధారంగా చెక్‌బాక్స్ సెట్ చేయడం
+        # చెక్‌బాక్స్ స్థితిని స్టోర్ చేయడం
         st.session_state.tasks_done[alarm["id"]] = st.checkbox(
             f"⏰ {alarm['time']} - {alarm['title']}", 
             value=st.session_state.tasks_done.get(alarm["id"], False),
             key=box_key
         )
+        
+        # అందమైన డిజైన్ కార్డ్స్ రూపంలో చూపించడం
         if st.session_state.tasks_done[alarm["id"]]:
-            st.markdown(f"<p style='color: green; margin-left: 30px;'>✅ Done: {alarm['msg']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<div class='task-card-done'>✅ <b>Done:</b> {alarm['msg']}</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<p style='color: #757575; margin-left: 30px;'>⏳ pending: {alarm['msg']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<div class='task-card-pending'>⏳ <b>Pending:</b> {alarm['msg']}</div>", unsafe_allow_html=True)
