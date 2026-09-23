@@ -13,6 +13,7 @@ st.markdown("""
     .stButton>button { width: 100%; border-radius: 8px; }
     .report-box { background-color: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; color: #0f172a; }
     .login-container { background-color: #ffffff; padding: 30px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+    .diet-box { background-color: #f0fdf4; border-left: 5px solid #16a34a; padding: 15px; border-radius: 10px; margin-bottom: 10px; color: #14532d; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -45,7 +46,7 @@ else:
     current_hour = current_time.hour
 
     # లాగౌట్ బటన్ పైన కుడివైపున
-    col_title, col_logout = st.columns([4, 1])
+    col_title, col_logout = st.columns()
     with col_title:
         st.title("🩺 ప్రశాంతి గారి AI షుగర్ కేర్ యాప్")
     with col_logout:
@@ -53,89 +54,116 @@ else:
             st.session_state.logged_in = False
             st.rerun()
 
-    if current_hour < 12:
-        st.success("🌅 **శుభోదయం ప్రశాంతి గారు!** ఈరోజు మీ ఆరోగ్యం చాలా బాగుండాలని కోరుకుంటున్నాను. ☀️")
-    elif 12 <= current_hour < 16:
-        st.info("🌤️ **శుభ మధ్యాహ్నం ప్రశాంతి గారు!** మధ్యాహ్న భోజనం సమయానికి ముగించండి.")
-    else:
-        st.warning("✨ **నమస్కారం ప్రశాంతి గారు!** మీ ఆరోగ్యాన్ని జాగ్రత్తగా చూసుకోండి.")
+    # మెనూ బార్ (Tabs) ఆప్షన్ - షెడ్యూల్ మరియు తెలంగాణ డైట్ ప్లాన్ కోసం
+    tab1, tab2 = st.tabs(["📅 దినచర్య & అలారమ్స్", "🌾 తెలంగాణ 10 రోజుల డైట్ ప్లాన్"])
 
-    # 3. స్ట్రెస్ రిలీఫ్ - రోజువారీ తెలుగు జోక్
-    st.markdown("---")
-    st.subheader("😂 నేటి నవ్వుల తోట (Stress Relief Joke)")
-    st.info("""
-    **డాక్టర్:** మీకు షుగర్ ఉంది, స్వీట్స్ అస్సలు తినకూడదు!  
-    **పేషెంట్:** మరి మా ఆవిడ నన్ను రోజూ 'స్వీటీ' అని పిలుస్తుంది కదా డాక్టర్, మరి ఆమెను కూడా వదలేయాలా? 😉
-    """)
-
-    # 4. 📸 🌟 AI ఫుడ్ స్కానర్ (తినాలా? వద్దా?)
-    st.markdown("---")
-    st.subheader("📸 AI ఫుడ్ స్కానర్ (ఆహారం ఫోటో అప్‌లోడ్ చేయండి)")
-    st.write("మీరు తినబోయే ఆహారం మంచిదో కాదో తెలుసుకోవడానికి ఫోటో తీసి ఇక్కడ అప్‌లోడ్ చేయండి:")
-
-    uploaded_file = st.file_uploader("ఆహారం ఇమేజ్‌ని ఎంచుకోండి (JPG, PNG)...", type=["jpg", "jpeg", "png"])
-
-    if uploaded_file is not None:
-        st.image(uploaded_file, caption="మీరు అప్‌లోడ్ చేసిన ఆహారం", use_container_width=True)
-        
-        with st.spinner("⏳ AI విశ్లేషిస్తోంది... దయచేసి వేచి ఉండండి..."):
-            time.sleep(2)
-            
-        st.markdown("### 🚦 AI ఫుడ్ వర్డిక్ట్ (Verdict):")
-        file_name = uploaded_file.name.lower()
-        if any(x in file_name for x in ["bonda", "sweet", "fry", "బజ్జీ", "బోండా", "స్వీట్", "బిర్యానీ", "biryani", "rice"]):
-            st.error("❌ **తినకండి (Avoid):** ఇందులో గ్లైసిమిక్ ఇండెక్స్ (GI) మరియు కార్బోహైడ్రేట్లు చాలా ఎక్కువగా ఉన్నాయి. దీనివల్ల రక్తంలో షుగర్ లెవెల్స్ చాలా వేగంగా పెరుగుతాయి. దీనికి బదులుగా ఓట్స్ ఇడ్లీ లేదా పెసరట్టు తీసుకోండి.")
+    with tab1:
+        if current_hour < 12:
+            st.success("🌅 **శుభోదయం ప్రశాంతి గారు!** ఈరోజు మీ ఆరోగ్యం చాలా బాగుండాలని కోరుకుంటున్నాను. ☀️")
+        elif 12 <= current_hour < 16:
+            st.info("🌤️ **శుభ మధ్యాహ్నం ప్రశాంతి గారు!** మధ్యాహ్న భోజనం సమయానికి ముగించండి.")
         else:
-            st.success("✅ **తినవచ్చు (Safe to Eat):** ఈ ఆహారంలో ఫైబర్ మరియు పోషకాలు సమతుల్యంగా ఉన్నాయి. అయితే, మీ గ్లూకోజ్ స్థాయిలను దృష్టిలో ఉంచుకుని తగిన పరిమాణంలో (మితంగా) తీసుకోండి.")
+            st.warning("✨ **నమస్కారం ప్రశాంతి గారు!** మీ ఆరోగ్యాన్ని జాగ్రత్తగా చూసుకోండి.")
 
-    # 5. నేటి పూర్తి దినచర్య షెడ్యూల్ (Interactive Schedule - New Routine Ver v2)
-    st.markdown("---")
-    st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
+        # 3. స్ట్రెస్ రిలీఫ్ - రోజువారీ తెలుగు జోక్
+        st.markdown("---")
+        st.subheader("😂 నేటి నవ్వుల తోట (Stress Relief Joke)")
+        st.info("""
+        **డాక్టర్:** మీకు షుగర్ ఉంది, స్వీట్స్ అస్సలు తినకూడదు!  
+        **పేషెంట్:** మరి మా ఆవిడ నన్ను రోజూ 'స్వీటీ' అని పిలుస్తుంది కదా డాక్టర్, మరి ఆమెను కూడా వదలేయాలా? 😉
+        """)
 
-    # ఫోర్స్ రీఫ్రెష్ కోసం మరియు కొత్త ఫీచర్స్ మిస్ అవ్వకుండా ఉండటానికి సెషన్ కీ మార్చడం జరిగింది
-    if 'tracker_v2' not in st.session_state:
-        st.session_state.tracker_v2 = {
-            "06:30 AM": {"task": "💧 ఉదయం వాటర్ అలారమ్", "info": "గోరువెచ్చని నీరు 1 గ్లాసు తాగండి.", "status": "ఇంకా లేదు", "comment": ""},
-            "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్", "info": "💊 మెట్‌ఫార్మిన్ 500mg (టిఫిన్ తర్వాత వేసుకోవాలి).", "status": "ఇంకా లేదు", "comment": ""},
-            "09:00 AM": {"task": "🚶‍♂️ బ్రేక్‌ఫాస్ట్ తర్వాత వాకింగ్ రిమైండర్", "info": "షుగర్ కంట్రోల్ అవ్వడానికి కనీసం 15-20 నిమిషాలు లైట్ వాకింగ్ చేయండి.", "status": "ఇంకా లేదు", "comment": ""},
-            "11:00 AM": {"task": "🥛 మధ్యాహ్నానికి ముందు వాటర్/మజ్జిగ అలారమ్", "info": "ఒక గ్లాసు పలచటి మజ్జిగ తాగడం వల్ల షుగర్ లెవెల్స్ స్థిరంగా ఉంటాయి.", "status": "ఇంకా లేదు", "comment": ""},
-            "01:00 PM": {"task": "🍛 మధ్యాహ్నం భోజనం (Lunch Time)", "info": "జొన్న రొట్టె లేదా ఆకుకూరలతో కూడిన బ్రౌన్ రైస్ తీసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
-            "01:30 PM": {"task": "🏃‍♂️ భోజనం తర్వాత ఎక్సర్‌సైజ్/వాకింగ్ అలారమ్", "info": "భోజనం తిన్న తర్వాత 30 నిమిషాలకు నడవడం వల్ల బ్లడ్ షుగర్ పెరగదు.", "status": "ఇంకా లేదు", "comment": ""},
-            "04:00 PM": {"task": "💧 సాయంత్రం వాటర్ అలారమ్", "info": "మరో గ్లాస్ నీరు తాగండి. బాడీని హైడ్రేటెడ్‌గా ఉంచండి.", "status": "ఇంకా లేదు", "comment": ""},
-            "08:30 PM": {"task": "🌙 రాత్రి భోజనం & టాబ్లెట్ (Dinner Time)", "info": "💊 రాత్రి భోజనం ముగించి డాక్టర్ సూచించిన టాబ్లెట్ వేసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
-            "09:00 PM": {"task": "🚶‍♀️ డిన్నర్ తర్వాత చివరి నడక అలారమ్", "info": "పడుకునే ముందు 15 నిమిషాల ప్రశాంతమైన నడక ఆరోగ్యానికి ఎంతో మేలు చేస్తుంది.", "status": "ఇంకా లేదు", "comment": ""}
-        }
+        # 4. 📸 🌟 AI ఫుడ్ స్కానర్ (తినాలా? వద్దా?)
+        st.markdown("---")
+        st.subheader("📸 AI ఫుడ్ స్కానర్ (ఆహారం ఫోటో అప్‌లోడ్ చేయండి)")
+        st.write("మీరు తినబోయే ఆహారం మంచిదో కాదో తెలుసుకోవడానికి ఫోటో తీసి ఇక్కడ అప్‌లోడ్ చేయండి:")
 
-    for time_slot, data in st.session_state.tracker_v2.items():
-        with st.expander(f"⏰ {time_slot} - {data['task']}"):
-            st.write(f"💡 {data['info']}")
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button(f"✅ పూర్తి చేసాను ({time_slot})", key=f"done_{time_slot}"):
-                    st.session_state.tracker_v2[time_slot]['status'] = "పూర్తి చేసారు ✅"
-            with col2:
-                if st.button(f"❌ స్కిప్ చేసాను ({time_slot})", key=f"skip_{time_slot}"):
-                    st.session_state.tracker_v2[time_slot]['status'] = "స్కిప్ చేసారు ❌"
+        uploaded_file = st.file_uploader("ఆహారం ఇమేజ్‌ని ఎంచుకోండి (JPG, PNG)...", type=["jpg", "jpeg", "png"])
+
+        if uploaded_file is not None:
+            st.image(uploaded_file, caption="మీరు అప్‌లోడ్ చేసిన ఆహారం", use_container_width=True)
             
-            comment = st.text_input("✍️ కామెంట్ రాయండి:", value=data['comment'], key=f"text_{time_slot}")
-            st.session_state.tracker_v2[time_slot]['comment'] = comment
-            st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker_v2[time_slot]['status']}**")
+            with st.spinner("⏳ AI విశ్లేషిస్తోంది... దయచేసి వేచి ఉండండి..."):
+                time.sleep(2)
+                
+            st.markdown("### 🚦 AI ఫుడ్ వర్డిక్ట్ (Verdict):")
+            file_name = uploaded_file.name.lower()
+            if any(x in file_name for x in ["bonda", "sweet", "fry", "బజ్జీ", "బోండా", "స్వీట్", "బిర్యానీ", "biryani", "rice", "అన్నం"]):
+                st.error("❌ **తినకండి (Avoid):** ఇందులో గ్లైసిమిక్ ఇండెక్స్ (GI) మరియు కార్బోహైడ్రేట్లు చాలా ఎక్కువగా ఉన్నాయి. దీనివల్ల రక్తంలో షుగర్ లెవెల్స్ చాలా వేగంగా పెరుగుతాయి. దీనికి బదులుగా జొన్న రొట్టె లేదా రాగి సంకటి తీసుకోండి.")
+            else:
+                st.success("✅ **తినవచ్చు (Safe to Eat):** ఈ ఆహారంలో ఫైబర్ మరియు పోషకాలు సమతుల్యంగా ఉన్నాయి. అయితే, మీ గ్లూకోజ్ స్థాయిలను దృష్టిలో ఉంచుకుని తగిన పరిమాణంలో (మితంగా) తీసుకోండి.")
 
-    # 6. రోజువారీ నివేదిక (Everyday Report)
-    st.markdown("---")
-    if st.button("📊 రోజువారీ రిపోర్ట్ (Everyday Report) జనరేట్ చేయండి"):
-        st.markdown("### 📋 ఈరోజు ఆరోజు నివేదిక")
-        st.markdown(f"**తేదీ:** {current_time.strftime('%d/%m/%Y')} | **సమయం:** {current_time.strftime('%I:%M %p')}")
+        # 5. నేటి పూర్తి దినచర్య షెడ్యూల్
+        st.markdown("---")
+        st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
+
+        if 'tracker_v3' not in st.session_state:
+            st.session_state.tracker_v3 = {
+                "06:00 AM": {"task": "🌱 మెంతుల నీరు అలారమ్", "info": "రాత్రి నానబెట్టుకున్న 1 స్పూన్ మెంతుల నీటిని తాగి, ఆ మెంతులను నమిలి తినండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "06:30 AM": {"task": "💧 ఉదయం వాటర్ అలారమ్", "info": "గోరువెచ్చని నీరు 1 గ్లాసు తాగండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్", "info": "💊 మెట్‌ఫార్మిన్ 500mg (తెలంగాణ స్టైల్ మిల్లెట్ బ్రేక్‌ఫాస్ట్ తర్వాత).", "status": "ఇంకా లేదు", "comment": ""},
+                "09:00 AM": {"task": "🚶‍♂️ బ్రేక్‌ఫాస్ట్ తర్వాత వాకింగ్ రిమైండర్", "info": "కనీసం 15-20 నిమిషాలు లైట్ వాకింగ్ చేయండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "11:00 AM": {"task": "🥛 మజ్జిగ / వాటర్ అలారమ్", "info": "ఒక గ్లాసు పలచటి మజ్జిగ తాగడం వల్ల షుగర్ లెవెల్స్ స్థిరంగా ఉంటాయి.", "status": "ఇంకా లేదు", "comment": ""},
+                "01:00 PM": {"task": "🍛 మధ్యాహ్నం భోజనం (Lunch Time)", "info": "జొన్న రొట్టె లేదా ఆకుకూరలతో కూడిన బ్రౌన్ రైస్/గట్క తీసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "01:30 PM": {"task": "🏃‍♂️ భోజనం తర్వాత ఎక్సర్‌సైజ్/వాకింగ్ అలారమ్", "info": "భోజనం తిన్న తర్వాత 30 నిమిషాలకు నడవడం వల్ల బ్లడ్ షుగర్ పెరగదు.", "status": "ఇంకా లేదు", "comment": ""},
+                "04:00 PM": {"task": "💧 సాయంత్రం వాటర్ అలారమ్", "info": "మరో గ్లాస్ నీరు తాగండి. బాడీని హైడ్రేటెడ్‌గా ఉంచండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "08:30 PM": {"task": "🌙 రాత్రి భోజనం & టాబ్లెట్ (Dinner Time)", "info": "💊 రాత్రి లైట్ జొన్న అంబలి లేదా రొట్టె తిని టాబ్లెట్ వేసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
+                "09:00 PM": {"task": "🚶‍♀️ డిన్నర్ తర్వాత చివరి నడక అలారమ్", "info": "పడుకునే ముందు 15 నిమిషాల ప్రశాంతమైన నడక ఆరోగ్యానికి ఎంతో మేలు చేస్తుంది.", "status": "ఇంకా లేదు", "comment": ""}
+            }
+
+        for time_slot, data in st.session_state.tracker_v3.items():
+            with st.expander(f"⏰ {time_slot} - {data['task']}"):
+                st.write(f"💡 {data['info']}")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button(f"✅ పూర్తి చేసాను ({time_slot})", key=f"done_{time_slot}"):
+                        st.session_state.tracker_v3[time_slot]['status'] = "పూర్తి చేసారు ✅"
+                with col2:
+                    if st.button(f"❌ స్కిప్ చేసాను ({time_slot})", key=f"skip_{time_slot}"):
+                        st.session_state.tracker_v3[time_slot]['status'] = "స్కిప్ చేసారు ❌"
+                
+                comment = st.text_input("✍️ కామెంట్ రాయండి:", value=data['comment'], key=f"text_{time_slot}")
+                st.session_state.tracker_v3[time_slot]['comment'] = comment
+                st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker_v3[time_slot]['status']}**")
+
+        st.markdown("---")
+        if st.button("📊 రోజువారీ రిపోర్ట్ (Everyday Report) జనరేట్ చేయండి"):
+            st.markdown("### 📋 ఈరోజు ఆరోజు నివేదిక")
+            for time_slot, data in st.session_state.tracker_v3.items():
+                st.markdown(f"""
+                <div class="report-box">
+                <strong>📍 సమయం: {time_slot}</strong><br>
+                • టాస్క్: {data['task']}<br>
+                • స్టేటస్: {data['status']}<br>
+                • కామెంట్: {data['comment'] if data['comment'] else 'ఏమీ రాయలేదు'}<br>
+                </div>
+                <br>
+                """, unsafe_allow_html=True)
+
+    # ----------------- 🌾 రాండమ్ స్క్రీన్ / ట్యాబ్ 2: తెలంగాణ డైట్ సజెషన్స్ -----------------
+    with tab2:
+        st.header("🌾 తెలంగాణ ఫుడ్ స్టైల్ - 10 రోజుల బెస్ట్ షుగర్ డైట్ ప్లాన్")
+        st.write("రక్తంలో గ్లూకోజ్ స్థాయిలను అదుపులో ఉంచడానికి మన తెలంగాణ సాంప్రదాయ వంటకాలతో కూడిన హెల్తీ చార్ట్:")
         
-        for time_slot, data in st.session_state.tracker_v2.items():
-            st.markdown(f"""
-            <div class="report-box">
-            <strong>📍 సమయం: {time_slot}</strong><br>
-            • టాస్క్: {data['task']}<br>
-            • స్టేటస్: {data['status']}<br>
-            • కామెంట్: {data['comment'] if data['comment'] else 'ఏమీ రాయలేదు'}<br>
-            </div>
-            <br>
-            """, unsafe_allow_html=True)
-            
-        st.caption("⚠️ గమనిక: ఈ రిపోర్ట్ సాధారణ అవగాహన కొరకు మాత్రమే. మందుల వాడకం లేదా మోతాదు (Dosage) మార్చే ముందు ఎల్లప్పుడూ డాక్టర్‌ను సంప్రదించండి.")
+        # 🔑 ప్రత్యేక మెంతుల సలహా
+        st.info("🌱 **మెంతుల అమృతం (Night to Morning Fix):** ప్రతిరోజూ రాత్రి పడుకునే ముందు ఒక టీస్పూన్ మెంతులను ఒక గ్లాసు నీటిలో నానబెట్టండి. ఉదయం లేవగానే పరగడుపున ఆ నీటిని తాగి, నానిన మెంతులను బాగా నమిలి మింగేయండి. ఇది ఇన్సులిన్ యాక్టివిటీని పెంచి రోజంతా షుగర్ లెవెల్స్ అదుపులో ఉండేలా సెట్ చేస్తుంది.")
+        
+        st.subheader("📅 10 రోజుల రోజువారీ మెనూ (Daily Menu Options)")
+        
+        st.markdown("""
+        <div class='diet-box'>
+        <strong>Day 1 - 3: జొన్నల ప్రత్యేక రోజులు</strong><br>
+        • <b>ఉదయం (08:30 AM):</b> వెజిటబుల్ జొన్న ఉప్మా లేదా జొన్న రొట్టె + ఆకుకూరల పప్పు.<br>
+        • <b>మధ్యాహ్నం (01:00 PM):</b> 1 జొన్న రొట్టె + గంగవాయిలి కూర/తోటకూర ఫ్రై + కప్పు పెరుగు.<br>
+        • <b>రాత్రి (08:30 PM):</b> వేడి వేడి జొన్న అంబలి (మజ్జిగ కలిపినది) + ఉడికించిన గుడ్డు.
+        </div>
+        
+        <div class='diet-box'>
+        <strong>Day 4 - 6: సజ్జలు & మిల్లెట్స్ రోజులు</strong><br>
+        • <b>ఉదయం (08:30 AM):</b> సజ్జ రొట్టె + టమాటో పచ్చిమిర్చి చట్నీ లేదా సజ్జ గట్క.<br>
+        • <b>మధ్యాహ్నం (01:00 PM):</b> కొర్ర అన్నం (Foxtail Millet) + నాటు కోడి కూర (తక్కువ నూనెతో) లేదా పప్పు చారు + బీరకాయ కూర.<br>
+        • <b>రాత్రి (08:30 PM):</b> కొర్ర కిచిడీ (ఎక్కువ వెజిటబుల్స్ వేసినది) + కీరా ముక్కలు.
+        </div>
+        
+        <div class='diet-box'>
+        <strong>Day 7 - 10: రాగులు & సాంప్రదాయ సమతుల్య రోజులు</strong><br>
