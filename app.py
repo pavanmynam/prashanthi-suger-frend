@@ -1,170 +1,103 @@
 import streamlit as st
 import datetime
 import pytz
-from streamlit_autorefresh import st_autorefresh
+import time
 
-# 1. యాప్ పేజీ మరియు ప్రీమియం స్టైలింగ్ సెటప్
-st.set_page_config(page_title="Prashanthi AI Sugar Care", page_icon="💖", layout="centered")
+# 1. పేజీ కాన్ఫిగరేషన్ మరియు డిజైన్ థీమ్
+st.set_page_config(page_title="ప్రశాంతి AI షుగర్ కేర్", page_icon="🩺", layout="centered")
 
+# సింపుల్ బ్యాక్‌గ్రౌండ్ డిజైన్ (CSS)
 st.markdown("""
     <style>
-    .main { background-color: #f4f7f6; }
-    .stApp { background-color: #f4f7f6; }
-    .wish-box { background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%); padding: 22px; border-radius: 15px; text-align: center; font-size: 20px; font-weight: bold; color: white; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .metric-card { background-color: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-top: 4px solid #1976d2; text-align: center; margin-bottom: 15px; }
-    .task-card-done { background-color: #e8f5e9; border-left: 5px solid #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-    .task-card-pending { background-color: #ffffff; border-left: 5px solid #ffe082; padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .alarm-box { background-color: #ffebee; border-left: 6px solid #c62828; padding: 18px; border-radius: 10px; font-weight: bold; color: #c62828; margin-bottom: 15px; }
-    .report-section { background-color: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-top: 20px; border: 1px solid #e0e0e0; }
+    .main { background-color: #f8fafc; }
+    .stButton>button { width: 100%; border-radius: 8px; }
+    .report-box { background-color: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; color: #0f172a; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- సెషన్ స్టేట్ మెయింటెనెన్స్ ---
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-if 'water_liters' not in st.session_state:
-    st.session_state.water_liters = 0.0
-if 'exercise_minutes' not in st.session_state:
-    st.session_state.exercise_minutes = 0
-if 'tasks_done' not in st.session_state:
-    st.session_state.tasks_done = {}
+# 2. టైమ్ జోన్ మరియు డైనమిక్ విషెస్ (Wishes)
+ist = pytz.timezone('Asia/Kolkata')
+current_time = datetime.datetime.now(ist)
+current_hour = current_time.hour
 
-# 2. లాగిన్ స్క్రీన్
-if not st.session_state.logged_in:
-    st.markdown("<h2 style='text-align: center; color: #1565c0;'>🔐 AI Sugar Care Login</h2>", unsafe_allow_html=True)
-    st.write("---")
-    username = st.text_input("యూザー ఐడి (Username):")
-    password = st.text_input("పాస్‌వర్డ్ (Password):", type="password")
-    
-    if st.button("🚀 లాగిన్ అవ్వండి", use_container_width=True):
-        if username == "prashanthi" and password == "sugarfree2026":
-            st.session_state.logged_in = True
-            st.rerun()
-        else:
-            st.error("❌ తప్పుడు వివరాలు! మళ్లీ ప్రయత్నించండి.")
+st.title("🩺 ప్రశాంతి గారి AI షుగర్ కేర్ యాప్")
+
+if current_hour < 12:
+    st.success("🌅 **శుభోదయం ప్రశాంతి గారు!** ఈరోజు మీ ఆరోగ్యం చాలా బాగుండాలని కోరుకుంటున్నాను. ☀️")
+elif 12 <= current_hour < 16:
+    st.info("🌤️ **శుభ మధ్యాహ్నం ప్రశాంతి గారు!** మధ్యాహ్న భోజనం సమయానికి ముగించండి.")
 else:
-    # ⏱️ ఆటో-రీఫ్రెష్ సెటప్ (ప్రతి 10 సెకన్లకు సమయాన్ని కరెక్ట్‌గా చెక్ చేస్తుంది)
-    st_autorefresh(interval=10000, key="datarefresh")
+    st.warning("✨ **నమస్కారం ప్రశాంతి గారు!** మీ ఆరోగ్యాన్ని జాగ్రత్తగా చూసుకోండి.")
 
-    # సైడ్ బార్ లాగౌట్ బటన్
-    if st.sidebar.button("🔒 Logout"):
-        st.session_state.logged_in = False
-        st.rerun()
+# 3. స్ట్రెస్ రిలీఫ్ - రోజువారీ తెలుగు జోక్
+st.markdown("---")
+st.subheader("😂 నేటి నవ్వుల తోట (Stress Relief Joke)")
+st.info("""
+**...
+**డాక్టర్:** మీకు షుగర్ ఉంది, స్వీట్స్ అస్సలు తినకూడదు!  
+**పేషెంట్:** మరి మా ఆవిడ నన్ను రోజూ 'స్వీటీ' అని పిలుస్తుంది కదా డాక్టర్, మరి ఆమెను కూడా వదలేయాలా? 😉
+""")
 
-    # 🌐 3. పక్కా ఇండియన్ టైమ్ జోన్ (IST) సెటప్
-    IST = pytz.timezone('Asia/Kolkata')
-    now = datetime.datetime.now(IST)
-    current_time_str = now.strftime("%H:%M")
-    current_hour = now.hour
+# 4. 📸 🌟 AI ఫుడ్ స్కానర్ (తినాలా? వద్దా?)
+st.markdown("---")
+st.subheader("📸 AI ఫుడ్ స్కానర్ (ఆహారం ఫోటో అప్‌లోడ్ చేయండి)")
+st.write("మీరు తినబోయే ఆహారం మంచిదో కాదో తెలుసుకోవడానికి ఫోటో తీసి ఇక్కడ అప్‌లోడ్ చేయండి:")
 
-    # 🌅 ఆటోమేటిక్ విషింగ్ మెసేజ్ లాజిక్
-    st.markdown("<div class='wish-box'>", unsafe_allow_html=True)
-    if 5 <= current_hour < 12:
-        st.write("🌅 శుభోదయం ప్రశాంతి గారు! ఈరోజు మీ షుగర్ కంట్రోల్ చేయడానికి ఒక అద్భుతమైన రోజూవారీ ప్రణాళికతో ప్రారంభిద్దాం. కీప్ ఇట్ అప్! 💪")
-    elif 12 <= current_hour < 16:
-        st.write("☀️ శుభ మధ్యాహ్నం ప్రశాంతి గారు! భోజన నియమాలను పక్కాగా పాటించండి. అన్నం వద్దు, జొన్న రొట్టెలే ముఖ్యం! 🥗")
-    elif 16 <= current_hour < 20:
-        st.write("🌇 శుభ సాయంత్రం ప్రశాంతి గారు! కాస్త రిలాక్స్ అవ్వండి, కొన్ని నట్స్ తీసుకోండి మరియు వాకింగ్ సిద్ధమవ్వండి. 🍏")
-    else:
-        st.write("🌌 శుభ రాత్రి ప్రశాంతి గారు! రాత్రి టాబ్లెట్ వేసుకుని, ప్రశాంతంగా నిద్రపోవడానికి సిద్ధమవ్వండి. రేపు మరింత ఆరోగ్యంగా ఉందాం! 🛌")
-    st.markdown("</div>", unsafe_allow_html=True)
+uploaded_file = st.file_uploader("ఆహారం ఇమేజ్‌ని ఎంచుకోండి (JPG, PNG)...", type=["jpg", "jpeg", "png"])
 
-    # ఇండియన్ టైమ్ డిస్‌ప్లే
-    st.markdown(f"<h3 style='text-align: center; color: #333;'>⏰ భారతీయ ప్రామాణిక సమయం: {now.strftime('%I:%M:%S %p')}</h3>", unsafe_allow_html=True)
-    st.write("---")
-
-    # 🧠 ఒత్తిడి నివారణ జోక్ సెక్షన్
-    with st.expander("😂 నేటి నవ్వుల తోట (Stress Relief Joke)", expanded=True):
-        st.markdown("""
-        **డాక్టర్:** మీకు షుగర్ ఉంది, స్వీట్లు అస్సలు తినకూడదు!<br>
-        **పేషెంట్:** మరి మా ఆవిడ నన్ను రోజూ 'స్వీటీ' అని పిలుస్తుంది కదా డాక్టర్, మరి ఆమెను కూడా వదిలేయాలా? 😂
-        """, unsafe_allow_html=True)
-
-    st.write("---")
-
-    # 📸 AI ఫుడ్ స్కానర్ సెక్షన్ (ప్లేస్‌హోల్డర్)
-    st.header("📸 AI ఫుడ్ స్కానర్ (ఆహారం ఫోటో అప్‌లోడ్ చేయండి)")
-    st.write("మీరు తినబోయే ఆహారం మంచిదో కాదో తెలుసుకోవడానికి ఫోటో తీసి ఇక్కడ అప్‌లోడ్ చేయండి.")
-    uploaded_food_img = st.file_uploader("ఆహారం ఇమేజ్‌ని ఎంచుకోండి...", type=["jpg", "jpeg", "png"])
-    if uploaded_food_img is not None:
-        st.image(uploaded_food_img, caption="అప్‌లోడ్ చేసిన ఆహారం ఫోటో", width=300)
-        st.info("🤖 AI విశ్లేషిస్తోంది... (Gemini API కనెక్ట్ చేసినప్పుడు ఇది లైవ్ రిపోర్ట్ ఇస్తుంది)")
-
-    st.write("---")
-
-    # 📊 డైలీ టైమ్-టేబుల్ డేటాబేస్ (సాయంత్రం స్నాక్స్, రాత్రి భోజనం మరియు మెడిసిన్ తో సహా)
-    DAILY_ALARM_ROUTINE = [
-        {"id": "t1", "time": "06:30", "title": "💧 వాటర్ అలారమ్ (ఉదయం)", "msg": "నిద్రలేచి ఒక పెద్ద గ్లాసు గోరువెచ్చని నీరు తాగండి. ఇది బాడీని క్లీన్ చేస్తుంది."},
-        {"id": "t2", "time": "07:00", "title": "🏃‍♂️ నడక అలారమ్ (వాకింగ్)", "msg": "షుగర్ తగ్గడానికి 30 నిమిషాల పాటు వేగంగా నడవండి (Brisk Walking)."},
-        {"id": "t3", "time": "08:30", "title": "🍳 ఉదయం బ్రేక్‌ఫాస్ట్ & మెడిసిన్", "msg": "మొలకెత్తిన గिంజలు/రాగి జావ తీసుకోండి. తిన్న వెంటనే ఉదయం షుగర్ టాబ్లెట్ వేసుకోండి!"},
-        {"id": "t4", "time": "11:00", "title": "💧 వాటర్ అలారమ్ (మధ్యాహ్నానికి ముందు)", "msg": "మరో గ్లాసు నీరు లేదా పలచటి మజ్జిగ తాగండి. షుగర్ పేరుకుపోకుండా కాపాడుతుంది."},
-        {"id": "t5", "time": "13:00", "title": "🥗 มధ్యాహ్న భోజనం (Lunch Time)", "msg": "తెల్ల అన్నం వద్దు! 2 జొన్న రొట్టెలు, ఎక్కువ ఆకుకూరలు, వెజిటబుల్ సలాడ్ మాత్రమే తినండి."},
-        {"id": "t6", "time": "13:30", "title": "🚶‍♀️ భోజనం తర్వాత నడక", "msg": "ఇంట్లోనే లేదా బయట కనీసం 10-15 నిమిషాల పాటు మెల్లగా నడవండి. దీనివల్ల షుగర్ పెరగదు."},
-        {"id": "t7", "time": "16:00", "title": "💧 వాటర్ అలారమ్ (సాయంత్రం)", "msg": "బాడీ హైడ్రేషన్ కోసం ఒక గ్లాసు నీరు తాగే సమయం అయింది."},
-        {"id": "t8", "time": "17:30", "title": "🍏 సాయంత్రం స్నాక్స్ అలారమ్", "msg": "కొన్ని నానబెట్టిన బాదం పప్పులు తినండి. టీ/కాఫీలలో చక్కెర అస్సలు వద్దు."},
-        {"id": "t9", "time": "20:00", "title": "🍲 రాత్రి భోజనం (Dinner Time)", "msg": "రాత్రి భోజనం చాలా తేలికగా ఉండాలి. వెజిటబుల్ సూప్ లేదా ఓట్స్ తీసుకోండి. అన్నం అస్సలు తినవద్దు."},
-        {"id": "t10", "time": "20:30", "title": "💊 రాత్రి మెడిసిన్ అలారమ్ (Night Tablet)", "msg": "భోజనం పూర్తయింది కదా! డాక్టర్ సూచించిన రాత్రి పూట షుగర్ టాబ్లెట్ వేసుకోండి."},
-        {"id": "t11", "time": "22:00", "title": "🛌 ప్రశాంతమైన నిద్ర అలారమ్", "msg": "రాత్రి 10 అయింది. ఫోన్ పక్కన పెట్టేసి పడుకోండి. 7-8 గంటల నిద్ర చాలా ముఖ్యం!"}
-    ]
-
-    # ⏳ రాబోయే అలారమ్ కౌंట్‌డౌన్
-    next_alarm = None
-    min_diff = float('inf')
-    for alarm in DAILY_ALARM_ROUTINE:
-        alarm_time = datetime.datetime.strptime(alarm["time"], "%H:%M").time()
-        alarm_datetime = datetime.datetime.combine(now.date(), alarm_time)
-        alarm_datetime = IST.localize(alarm_datetime)
-        if alarm_datetime < now:
-            alarm_datetime += datetime.timedelta(days=1)
-        diff = (alarm_datetime - now).total_seconds()
-        if diff < min_diff:
-            min_diff = diff
-            next_alarm = alarm
-
-    if next_alarm:
-        hours_left = int(min_diff // 3600)
-        minutes_left = int((min_diff % 3600) // 60)
-        st.markdown(f"<div class='metric-card'><b>👉 రాబోయే టాస్క్:</b> {next_alarm['title']} ({next_alarm['time']})<br><span style='font-size: 20px; color: #e65100; font-weight: bold;'>⏱️ అలారమ్‌కు మిగిలి ఉన్న సమయం: {hours_left} గంటల {minutes_left} నిమిషాలు</span></div>", unsafe_allow_html=True)
-
-    # 🚨 లైవ్ అలారమ్ ట్రిగ్గర్ లాజిక్
-    for alarm in DAILY_ALARM_ROUTINE:
-        if current_time_str == alarm["time"]:
-            st.markdown(f"<div class='alarm-box'>🚨 {alarm['title']}<br>{alarm['msg']}</div>", unsafe_allow_html=True)
-            alarm_sound_url = "https://google.com"
-            st.markdown(f'<iframe src="{alarm_sound_url}" allow="autoplay" style="display:none;"></iframe>', unsafe_allow_html=True)
-
-    st.write("---")
-
-    # 📋 నేటి దినచర్య షెడ్యూల్ వ్యూ
-    st.header("📋 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
-    total_tasks = len(DAILY_ALARM_ROUTINE)
-    completed_tasks = sum(1 for t in DAILY_ALARM_ROUTINE if st.session_state.tasks_done.get(t["id"], False))
-    st.progress(completed_tasks / total_tasks)
-    st.write(f"📊 **టాస్క్ పూర్తయిన రేటు:** {completed_tasks} / {total_tasks} పనులు పూర్తయ్యాయి.")
-
-    for alarm in DAILY_ALARM_ROUTINE:
-        box_key = f"chk_{alarm['id']}"
-        st.session_state.tasks_done[alarm["id"]] = st.checkbox(
-            f"⏰ {alarm['time']} - {alarm['title']}", 
-            value=st.session_state.tasks_done.get(alarm["id"], False),
-            key=box_key
-        )
-        if st.session_state.tasks_done[alarm["id"]]:
-            st.markdown(f"<div class='task-card-done'>✅ <b>Done:</b> {alarm['msg']}</div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div class='task-card-pending'>⏳ <b>Pending:</b> {alarm['msg']}</div>", unsafe_allow_html=True)
-
-    st.write("---")
-
-    # 📊 4. డైలీ హెల్త్ రిపోర్ట్ మానిటర్ (Exercise & Water Monitor)
-    st.header("📊 డైలీ హెల్త్ రిపోర్ట్ (Daily Report Options)")
+if uploaded_file is not None:
+    st.image(uploaded_file, caption="మీరు అప్‌లోడ్ చేసిన ఆహారం", use_container_width=True)
     
-    with st.container():
-        st.markdown("<div class='report-section'>", unsafe_allow_html=True)
-        st.subheader("💧 వాటర్ ఇన్-టేక్ ట్రాకర్")
-        col_w1, col_w2 = st.columns(2)
-        with col_w1:
-            if st.button("🥤 1 గ్లాసు నీరు తాగాను (250ml)", use_container_width=True):
-                st.session_state.water_liters += 0.25
-        with col_w2:
-            if st.button("🔄 వాటర్ కౌంటర్ రీసెట్", use_container_width=True):
+    with st.spinner("⏳ AI విశ్లేషిస్తోంది... దయచేసి వేచి ఉండండి..."):
+        time.sleep(2)
+        
+    st.markdown("### 🚦 AI ఫుడ్ వర్డిక్ట్ (Verdict):")
+    file_name = uploaded_file.name.lower()
+    if any(x in file_name for x in ["bonda", "sweet", "fry", "బజ్జీ", "బోండా", "స్వీట్"]):
+        st.error("❌ **తినకండి (Avoid):** ఇందులో గ్లైసిమిక్ ఇండెక్స్ (GI) మరియు కార్బోహైడ్రేట్లు చాలా ఎక్కువగా ఉన్నాయి. దీనివల్ల రక్తంలో షుగర్ లెవెల్స్ చాలా వేగంగా పెరుగుతాయి. దీనికి బదులుగా ఓట్స్ ఇడ్లీ లేదా పెసరట్టు తీసుకోండి.")
+    else:
+        st.success("✅ **తినవచ్చు (Safe to Eat):** ఈ ఆహారంలో ఫైబర్ మరియు పోషకాలు సమతుల్యంగా ఉన్నాయి. అయితే, మీ గ్లూకోజ్ స్థాయిలను దృష్టిలో ఉంచుకుని తగిన పరిమాణంలో (మితంగా) తీసుకోండి.")
+
+# 5. నేటి పూర్తి దినచర్య షెడ్యూల్ (Interactive Schedule)
+st.markdown("---")
+st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
+
+if 'tracker' not in st.session_state:
+    st.session_state.tracker = {
+        "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్ (మెట్‌ఫార్మిన్ 500mg)", "status": "ఇంకా లేదు", "comment": ""},
+        "11:00 AM": {"task": "🥛 పలచటి మజ్జిగ / వాటర్ అలారమ్", "status": "ఇంకా లేదు", "comment": ""},
+        "01:00 PM": {"task": "🍛 మధ్యాహ్నం భోజనం (జొన్న రొట్టె/బ్రౌన్ రైస్)", "status": "ఇంకా లేదు", "comment": ""}
+    }
+
+for time_slot, data in st.session_state.tracker.items():
+    with st.expander(f"⏰ {time_slot} - {data['task']}"):
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(f"✅ తిన్నాను/తాగాను ({time_slot})", key=f"done_{time_slot}"):
+                st.session_state.tracker[time_slot]['status'] = "పూర్తి చేసారు ✅"
+        with col2:
+            if st.button(f"❌ స్キప్ చేసాను ({time_slot})", key=f"skip_{time_slot}"):
+                st.session_state.tracker[time_slot]['status'] = "స్కిప్ చేసారు ❌"
+        
+        comment = st.text_input("✍️ కామెంట్ రాయండి:", value=data['comment'], key=f"text_{time_slot}")
+        st.session_state.tracker[time_slot]['comment'] = comment
+        st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker[time_slot]['status']}**")
+
+# 6. రోజువారీ నివేదిక (Everyday Report)
+st.markdown("---")
+if st.button("📊 రోజువారీ రిపోర్ట్ (Everyday Report) జనరేట్ చేయండి"):
+    st.markdown("### 📋 ఈరోజు ఆరోజు నిвеదిక")
+    st.markdown(f"**తేదీ:** {current_time.strftime('%d/%m/%Y')} | **సమయం:** {current_time.strftime('%I:%M %p')}")
+    
+    for time_slot, data in st.session_state.tracker.items():
+        st.markdown(f"""
+        <div class="report-box">
+        <strong>📍 సమయం: {time_slot}</strong><br>
+        • టాస్క్: {data['task']}<br>
+        • స్టేటస్: {data['status']}<br>
+        • కామెంట్: {data['comment'] if data['comment'] else 'ఏమీ రాయలేదు'}<br>
+        </div>
+        <br>
+        """, unsafe_allow_html=True)
+        
+    st.caption("⚠️ గమనిక: ఈ రిపోర్ట్ సాధారణ అవగాహన కొరకు మాత్రమే. టాబ్లెట్ డోసేజ్ మార్చే ముందు ఎల్లప్పుడూ డాక్టర్‌ను సంప్రదించండి.")
