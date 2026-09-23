@@ -56,7 +56,7 @@ else:
     if current_hour < 12:
         st.success("🌅 **శుభోదయం ప్రశాంతి గారు!** ఈరోజు మీ ఆరోగ్యం చాలా బాగుండాలని కోరుకుంటున్నాను. ☀️")
     elif 12 <= current_hour < 16:
-        st.info("🌤️ **శుభ మਧ్యాహ్నం ప్రశాంతి గారు!** మਧ్యాహ్న భోజనం సమయానికి ముగించండి.")
+        st.info("🌤️ **శుభ మధ్యాహ్నం ప్రశాంతి గారు!** మధ్యాహ్న భోజనం సమయానికి ముగించండి.")
     else:
         st.warning("✨ **నమస్కారం ప్రశాంతి గారు!** మీ ఆరోగ్యాన్ని జాగ్రత్తగా చూసుకోండి.")
 
@@ -83,36 +83,43 @@ else:
             
         st.markdown("### 🚦 AI ఫుడ్ వర్డిక్ట్ (Verdict):")
         file_name = uploaded_file.name.lower()
-        if any(x in file_name for x in ["bonda", "sweet", "fry", "బజ్జీ", "బోండా", "స్వీట్", "బిర్యానీ", "biryani"]):
+        if any(x in file_name for x in ["bonda", "sweet", "fry", "బజ్జీ", "బోండా", "స్వీట్", "బిర్యానీ", "biryani", "rice"]):
             st.error("❌ **తినకండి (Avoid):** ఇందులో గ్లైసిమిక్ ఇండెక్స్ (GI) మరియు కార్బోహైడ్రేట్లు చాలా ఎక్కువగా ఉన్నాయి. దీనివల్ల రక్తంలో షుగర్ లెవెల్స్ చాలా వేగంగా పెరుగుతాయి. దీనికి బదులుగా ఓట్స్ ఇడ్లీ లేదా పెసరట్టు తీసుకోండి.")
         else:
             st.success("✅ **తినవచ్చు (Safe to Eat):** ఈ ఆహారంలో ఫైబర్ మరియు పోషకాలు సమతుల్యంగా ఉన్నాయి. అయితే, మీ గ్లూకోజ్ స్థాయిలను దృష్టిలో ఉంచుకుని తగిన పరిమాణంలో (మితంగా) తీసుకోండి.")
 
-    # 5. నేటి పూర్తి దినచర్య షెడ్యూల్ (Interactive Schedule - Dinner added)
+    # 5. నేటి పూర్తి దినచర్య షెడ్యూల్ (Interactive Schedule - New Routine Ver v2)
     st.markdown("---")
-    st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & メడిసిన్ ట్రాకర్")
+    st.subheader("📅 నేటి దినచర్య షెడ్యూల్ & మెడిసిన్ ట్రాకర్")
 
-    if 'tracker' not in st.session_state:
-        st.session_state.tracker = {
-            "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్ (మెట్‌ఫార్మిన్ 500mg)", "status": "ఇంకా లేదు", "comment": ""},
-            "11:00 AM": {"task": "🥛 పలచటి మజ్జిగ / వాటర్ అలారమ్", "status": "ఇంకా లేదు", "comment": ""},
-            "01:00 PM": {"task": "🍛 మధ్యాహ్నం భోజనం (జొన్న రొట్టె/బ్రౌన్ రైస్)", "status": "ఇంకా లేదు", "comment": ""},
-            "08:30 PM": {"task": "🌙 రాత్రి భోజనం & టాబ్లెట్ (డిన్నర్ టైమ్)", "status": "ఇంకా లేదు", "comment": ""}
+    # ఫోర్స్ రీఫ్రెష్ కోసం మరియు కొత్త ఫీచర్స్ మిస్ అవ్వకుండా ఉండటానికి సెషన్ కీ మార్చడం జరిగింది
+    if 'tracker_v2' not in st.session_state:
+        st.session_state.tracker_v2 = {
+            "06:30 AM": {"task": "💧 ఉదయం వాటర్ అలారమ్", "info": "గోరువెచ్చని నీరు 1 గ్లాసు తాగండి.", "status": "ఇంకా లేదు", "comment": ""},
+            "08:30 AM": {"task": "🍳 బ్రేక్‌ఫాస్ట్ & టాబ్లెట్", "info": "💊 మెట్‌ఫార్మిన్ 500mg (టిఫిన్ తర్వాత వేసుకోవాలి).", "status": "ఇంకా లేదు", "comment": ""},
+            "09:00 AM": {"task": "🚶‍♂️ బ్రేక్‌ఫాస్ట్ తర్వాత వాకింగ్ రిమైండర్", "info": "షుగర్ కంట్రోల్ అవ్వడానికి కనీసం 15-20 నిమిషాలు లైట్ వాకింగ్ చేయండి.", "status": "ఇంకా లేదు", "comment": ""},
+            "11:00 AM": {"task": "🥛 మధ్యాహ్నానికి ముందు వాటర్/మజ్జిగ అలారమ్", "info": "ఒక గ్లాసు పలచటి మజ్జిగ తాగడం వల్ల షుగర్ లెవెల్స్ స్థిరంగా ఉంటాయి.", "status": "ఇంకా లేదు", "comment": ""},
+            "01:00 PM": {"task": "🍛 మధ్యాహ్నం భోజనం (Lunch Time)", "info": "జొన్న రొట్టె లేదా ఆకుకూరలతో కూడిన బ్రౌన్ రైస్ తీసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
+            "01:30 PM": {"task": "🏃‍♂️ భోజనం తర్వాత ఎక్సర్‌సైజ్/వాకింగ్ అలారమ్", "info": "భోజనం తిన్న తర్వాత 30 నిమిషాలకు నడవడం వల్ల బ్లడ్ షుగర్ పెరగదు.", "status": "ఇంకా లేదు", "comment": ""},
+            "04:00 PM": {"task": "💧 సాయంత్రం వాటర్ అలారమ్", "info": "మరో గ్లాస్ నీరు తాగండి. బాడీని హైడ్రేటెడ్‌గా ఉంచండి.", "status": "ఇంకా లేదు", "comment": ""},
+            "08:30 PM": {"task": "🌙 రాత్రి భోజనం & టాబ్లెట్ (Dinner Time)", "info": "💊 రాత్రి భోజనం ముగించి డాక్టర్ సూచించిన టాబ్లెట్ వేసుకోండి.", "status": "ఇంకా లేదు", "comment": ""},
+            "09:00 PM": {"task": "🚶‍♀️ డిన్నర్ తర్వాత చివరి నడక అలారమ్", "info": "పడుకునే ముందు 15 నిమిషాల ప్రశాంతమైన నడక ఆరోగ్యానికి ఎంతో మేలు చేస్తుంది.", "status": "ఇంకా లేదు", "comment": ""}
         }
 
-    for time_slot, data in st.session_state.tracker.items():
+    for time_slot, data in st.session_state.tracker_v2.items():
         with st.expander(f"⏰ {time_slot} - {data['task']}"):
+            st.write(f"💡 {data['info']}")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button(f"✅ తిన్నాను/తాగాను ({time_slot})", key=f"done_{time_slot}"):
-                    st.session_state.tracker[time_slot]['status'] = "పూర్తి చేసారు ✅"
+                if st.button(f"✅ పూర్తి చేసాను ({time_slot})", key=f"done_{time_slot}"):
+                    st.session_state.tracker_v2[time_slot]['status'] = "పూర్తి చేసారు ✅"
             with col2:
                 if st.button(f"❌ స్కిప్ చేసాను ({time_slot})", key=f"skip_{time_slot}"):
-                    st.session_state.tracker[time_slot]['status'] = "స్కిప్ చేసారు ❌"
+                    st.session_state.tracker_v2[time_slot]['status'] = "స్కిప్ చేసారు ❌"
             
             comment = st.text_input("✍️ కామెంట్ రాయండి:", value=data['comment'], key=f"text_{time_slot}")
-            st.session_state.tracker[time_slot]['comment'] = comment
-            st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker[time_slot]['status']}**")
+            st.session_state.tracker_v2[time_slot]['comment'] = comment
+            st.write(f"ప్రస్తుత స్టేటస్: **{st.session_state.tracker_v2[time_slot]['status']}**")
 
     # 6. రోజువారీ నివేదిక (Everyday Report)
     st.markdown("---")
@@ -120,7 +127,7 @@ else:
         st.markdown("### 📋 ఈరోజు ఆరోజు నివేదిక")
         st.markdown(f"**తేదీ:** {current_time.strftime('%d/%m/%Y')} | **సమయం:** {current_time.strftime('%I:%M %p')}")
         
-        for time_slot, data in st.session_state.tracker.items():
+        for time_slot, data in st.session_state.tracker_v2.items():
             st.markdown(f"""
             <div class="report-box">
             <strong>📍 సమయం: {time_slot}</strong><br>
@@ -131,4 +138,4 @@ else:
             <br>
             """, unsafe_allow_html=True)
             
-        st.caption("⚠️ గమనిక: ఈ రిపోర్ట్ సాధారణ అవగాహన కొరకు మాత్రమే. టాబ్లెట్ డోసేజ్ మార్చే ముందు ఎల్లప్పుడూ డాక్టర్‌ను సంప్రదించండి.")
+        st.caption("⚠️ గమనిక: ఈ రిపోర్ట్ సాధారణ అవగాహన కొరకు మాత్రమే. మందుల వాడకం లేదా మోతాదు (Dosage) మార్చే ముందు ఎల్లప్పుడూ డాక్టర్‌ను సంప్రదించండి.")
